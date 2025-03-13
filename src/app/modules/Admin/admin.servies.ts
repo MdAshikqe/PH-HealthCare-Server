@@ -16,6 +16,8 @@ const prisma= new PrismaClient();
 // ]
 
 const getAllDB= async(params:any)=>{
+    const {searchTerm,...filterData}=params;
+
     const andConditions:Prisma.AdminWhereInput[]=[];
     const adminSearchFields=["name","email"];
     if(params.searchTerm){
@@ -29,6 +31,15 @@ const getAllDB= async(params:any)=>{
             }))
         })
 
+    }
+    if(Object.keys(filterData).length>0){
+        andConditions.push({
+            AND:Object.keys(filterData).map(key=>({
+                [key]:{
+                    equals:filterData[key]
+                }
+            }))
+        })
     }
 
     const whereCondition:Prisma.AdminWhereInput={AND:andConditions};
