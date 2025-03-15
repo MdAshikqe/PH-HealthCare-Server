@@ -72,9 +72,29 @@ const updateIntoDB= async(req:Request,res:Response)=>{
 
 }
 
+const deleteFromDB= async(req:Request,res:Response)=>{
+    const { id } = req.params;
+ try {
+    const result= await AdminService.deleteFromDB(id);
+    res.status(200).json({
+        success:true,
+        message:"Admin delete successfuly",
+        data:result
+    })
+    
+ } catch (error) {
+    res.status(500).json({
+        success:false,
+        message: (error as Error).name || "internal server error"
+    })
+    
+ }
+
+}
 
 export const AdminController={
     getAllDB,
     getByIdFromDB,
-    updateIntoDB
+    updateIntoDB,
+    deleteFromDB
 }
