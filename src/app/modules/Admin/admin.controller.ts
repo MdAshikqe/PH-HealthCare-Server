@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AdminService } from "./admin.servies";
 import pick from "../../../shared/pick";
 import { adminFilterableFields, adminPaginationFields } from "./admin.constant";
+import prisma from "../../../shared/prisma";
 
 
 
@@ -70,7 +71,7 @@ const updateIntoDB= async(req:Request,res:Response)=>{
         
     }
 
-}
+};
 
 const deleteFromDB= async(req:Request,res:Response)=>{
     const { id } = req.params;
@@ -90,11 +91,32 @@ const deleteFromDB= async(req:Request,res:Response)=>{
     
  }
 
+};
+
+const softDeleteFromDB= async(req:Request,res:Response)=>{
+    const {id}=req.params;
+try {
+    const result= await AdminService.softDeleteFromDB(id);
+    res.status(200).json({
+        success:true,
+        message:"Admin delete(softDelete) succesfuly",
+        data:result
+    })
+} catch (error) {
+    res.status(500).json({
+        success:false,
+        message: (error as any)?.name || "internal error",
+        error
+    })
+    
+}
+
 }
 
 export const AdminController={
     getAllDB,
     getByIdFromDB,
     updateIntoDB,
-    deleteFromDB
+    deleteFromDB,
+    softDeleteFromDB
 }

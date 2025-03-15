@@ -8,6 +8,7 @@ router.get("/",AdminController.getAllDB);
 router.get("/:id",AdminController.getByIdFromDB);
 
 router.patch("/:id",AdminController.updateIntoDB);
-router.delete("/:id",AdminController.deleteFromDB)
+router.delete("/:id",AdminController.deleteFromDB);
+router.delete("/softD/:id",AdminController.softDeleteFromDB);
 
 export const AdminRoutes=router;
