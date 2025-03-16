@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { AdminService } from "./admin.servies";
 import pick from "../../../shared/pick";
 import { adminFilterableFields, adminPaginationFields } from "./admin.constant";
@@ -9,7 +9,7 @@ import status from "http-status";
 
 
 
-const getAllDB= async(req:Request,res:Response)=>{
+const getAllDB= async(req:Request,res:Response,next:NextFunction)=>{
 try {
     const filter=pick(req.query,adminFilterableFields);
     const options=pick(req.query,adminPaginationFields);
@@ -31,17 +31,13 @@ try {
         data:result.data 
     })
 } catch (error) {
-    res.status(500).json({
-        success:false,
-        message:(error as any)?.name || "Internal server error",
-        error
-    })
+    next(error)
     
 }
 }
 
 
-const getByIdFromDB= async(req:Request,res:Response)=>{
+const getByIdFromDB= async(req:Request,res:Response,next:NextFunction)=>{
     const {id}=req.params;
    try {
     const result= await AdminService.getByIdFromDB(id);
@@ -58,15 +54,11 @@ const getByIdFromDB= async(req:Request,res:Response)=>{
     // })
     
    } catch (error) {
-    res.status(500).json({
-        success:false,
-        message:(error as any)?.name || "Internal server error",
-        error
-    })
+        next(error)
    }
 };
 
-const updateIntoDB= async(req:Request,res:Response)=>{
+const updateIntoDB= async(req:Request,res:Response,next:NextFunction)=>{
     const{id} =req.params;
     const data= req.body;
   
@@ -85,17 +77,12 @@ const updateIntoDB= async(req:Request,res:Response)=>{
         // })
         
     } catch (error) {
-        res.status(500).json({
-            success:false,
-            message: (error as Error).name || "Data updated failed",
-            error
-        })
-        
+        next(error) 
     }
 
 };
 
-const deleteFromDB= async(req:Request,res:Response)=>{
+const deleteFromDB= async(req:Request,res:Response,next:NextFunction)=>{
     const { id } = req.params;
  try {
     const result= await AdminService.deleteFromDB(id);
@@ -113,16 +100,13 @@ const deleteFromDB= async(req:Request,res:Response)=>{
     // })
     
  } catch (error) {
-    res.status(500).json({
-        success:false,
-        message: (error as Error).name || "internal server error"
-    })
+    next(error)
     
  }
 
 };
 
-const softDeleteFromDB= async(req:Request,res:Response)=>{
+const softDeleteFromDB= async(req:Request,res:Response,next:NextFunction)=>{
     const {id}=req.params;
 try {
     const result= await AdminService.softDeleteFromDB(id);
@@ -138,11 +122,7 @@ try {
     //     data:result
     // })
 } catch (error) {
-    res.status(500).json({
-        success:false,
-        message: (error as any)?.name || "internal error",
-        error
-    })
+        next(error)
     
 }
 
