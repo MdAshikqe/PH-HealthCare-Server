@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 import { AdminService } from "./admin.servies";
 import pick from "../../../shared/pick";
 import { adminFilterableFields, adminPaginationFields } from "./admin.constant";
-import prisma from "../../../shared/prisma";
+import sendResponse from "../../../shared/sendResponse";
+
+
 
 
 
@@ -11,15 +13,22 @@ try {
     const filter=pick(req.query,adminFilterableFields);
     const options=pick(req.query,adminPaginationFields);
 
-    // console.log({options});
 
     const result= await AdminService.getAllDB(filter,options);
-    res.status(200).json({
+    // res.status(200).json({
+    //     success:true,
+    //     message:"Admin fetched successfully",
+    //     metaData:result.metaData,
+    //     data:result.data
+    // });
+
+     sendResponse(res,{
+        statusCode:200,
         success:true,
         message:"Admin fetched successfully",
         metaData:result.metaData,
-        data:result.data
-    });
+        data:result.data 
+    })
 } catch (error) {
     res.status(500).json({
         success:false,
@@ -35,11 +44,17 @@ const getByIdFromDB= async(req:Request,res:Response)=>{
     const {id}=req.params;
    try {
     const result= await AdminService.getByIdFromDB(id);
-    res.status(200).json({
+    sendResponse(res,{
+        statusCode:200,
         success:true,
         message:"Admin data fetched by id successfully ",
         data:result
     })
+    // res.status(200).json({
+    //     success:true,
+    //     message:"Admin data fetched by id successfully ",
+    //     data:result
+    // })
     
    } catch (error) {
     res.status(500).json({
@@ -56,11 +71,17 @@ const updateIntoDB= async(req:Request,res:Response)=>{
   
     try {
         const result= await AdminService.updateIntoDB(id,data);
-        res.status(200).json({
+        sendResponse(res,{
+            statusCode:200,
             success:true,
             message:"Admin data updated successfully",
             data:result
         })
+        // res.status(200).json({
+        //     success:true,
+        //     message:"Admin data updated successfully",
+        //     data:result
+        // })
         
     } catch (error) {
         res.status(500).json({
@@ -77,11 +98,18 @@ const deleteFromDB= async(req:Request,res:Response)=>{
     const { id } = req.params;
  try {
     const result= await AdminService.deleteFromDB(id);
-    res.status(200).json({
+    sendResponse(res,{
+        statusCode:200,
         success:true,
         message:"Admin delete successfuly",
         data:result
     })
+    
+    // res.status(200).json({
+    //     success:true,
+    //     message:"Admin delete successfuly",
+    //     data:result
+    // })
     
  } catch (error) {
     res.status(500).json({
@@ -97,11 +125,17 @@ const softDeleteFromDB= async(req:Request,res:Response)=>{
     const {id}=req.params;
 try {
     const result= await AdminService.softDeleteFromDB(id);
-    res.status(200).json({
+    sendResponse(res,{
+        statusCode:200,
         success:true,
         message:"Admin delete(softDelete) succesfuly",
         data:result
     })
+    // res.status(200).json({
+    //     success:true,
+    //     message:"Admin delete(softDelete) succesfuly",
+    //     data:result
+    // })
 } catch (error) {
     res.status(500).json({
         success:false,

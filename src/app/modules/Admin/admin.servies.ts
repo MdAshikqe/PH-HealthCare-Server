@@ -3,6 +3,7 @@ import { adminSearchFields } from "./admin.constant";
 import { PaginationHelpers } from "../../../helpars/paginationHelpars";
 import prisma from "../../../shared/prisma";
 
+
 // [
 //     {
 //         name:{
@@ -46,7 +47,11 @@ const getAllDB= async(params:any,options:any)=>{
                 }
             }))
         })
-    }
+    };
+
+    andConditions.push({
+        isDeleted:false
+    })
 
     const whereCondition:Prisma.AdminWhereInput={AND:andConditions};
 
@@ -73,20 +78,22 @@ const getAllDB= async(params:any,options:any)=>{
     };
 };
 
-const getByIdFromDB= async(id:string)=>{
+const getByIdFromDB= async(id:string):Promise<Admin | null>=>{
     const result= await prisma.admin.findUnique({
         where:{
-            id
+            id,
+            isDeleted:false
         }
     })
     return result;
 };
 
-const updateIntoDB= async(id:string,data:Partial<Admin>)=>{
+const updateIntoDB= async(id:string,data:Partial<Admin>):Promise<Admin>=>{
     //is exit
      await prisma.admin.findUniqueOrThrow({
         where:{
-            id
+            id,
+            isDeleted:false
         }
     })
 
@@ -99,7 +106,7 @@ const updateIntoDB= async(id:string,data:Partial<Admin>)=>{
     return result;
 };
 
-const deleteFromDB= async(id:string)=>{
+const deleteFromDB= async(id:string):Promise<Admin |null>=>{
     await prisma.admin.findUniqueOrThrow({
         where:{
             id
@@ -123,6 +130,12 @@ const deleteFromDB= async(id:string)=>{
 }
 
 const softDeleteFromDB= async(id:string)=>{
+    await prisma.admin.findUniqueOrThrow({
+        where:{
+            id,
+            isDeleted:false
+        }
+    })
     const result=await prisma.$transaction(async(transactionClient)=>{
         const adminSoftDelete= await transactionClient.admin.update({
             where:{
