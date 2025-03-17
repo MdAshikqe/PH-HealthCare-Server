@@ -8,10 +8,6 @@ import catchAsync from "../../../shared/catchAsync";
 
 
 
-
-
-
-
 const getAllDB:RequestHandler= catchAsync(async(req,res)=>{
 
         const filter=pick(req.query,adminFilterableFields);
