@@ -8,8 +8,8 @@ const login = catchAsync(async(req:Request,res:Response)=>{
     const data=req.body
     const result= await AuthServices.login(data);
 
-    const {refressToken}=result;
-    res.cookie("refressToken",refressToken,{
+    const {refreshToken}=result;
+    res.cookie("refreshToken",refreshToken,{
         secure:false,
         httpOnly:true
     })
@@ -24,9 +24,24 @@ const login = catchAsync(async(req:Request,res:Response)=>{
         }
     })
 
+});
+
+const refreshToken=catchAsync(async(req:Request,res:Response)=>{
+    console.log(req.cookies);
+    const {refreshToken}=req.cookies;
+    const result= await AuthServices.refreshToken(refreshToken)
+
+    sendResponse(res,{
+        statusCode:status.OK,
+        success:true,
+        message:"Refresh token are generate",
+        data:result
+    })
+
 })
 
 
 export const AuthController={
-    login
+    login,
+    refreshToken
 }
