@@ -27,7 +27,6 @@ const login = catchAsync(async(req:Request,res:Response)=>{
 });
 
 const refreshToken=catchAsync(async(req:Request,res:Response)=>{
-    console.log(req.cookies);
     const {refreshToken}=req.cookies;
     const result= await AuthServices.refreshToken(refreshToken)
 

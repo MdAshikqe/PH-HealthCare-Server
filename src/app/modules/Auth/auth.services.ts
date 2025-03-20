@@ -2,7 +2,8 @@ import { UserStatus } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import { ILogin } from "./auth.interface";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
+import config from "../../../config";
 
 // const generateToken = (payload:any, secret: string, expiresIn: string) => {
 //     const token = jwt.sign(
@@ -14,6 +15,7 @@ import jwt from "jsonwebtoken";
 //     );
 //     return token;
 // }
+
 
 const login=async(payload:ILogin)=>{
     const userData= await prisma.user.findUniqueOrThrow({
@@ -31,10 +33,10 @@ const login=async(payload:ILogin)=>{
         email:userData.email,
         role:userData.role
         },
-        "abcd", 
+        config.jwt.access_token_secret as string, 
         {
             algorithm:"HS256",
-            expiresIn:"5m"
+            expiresIn:config.jwt.access_token_expires_in as string,
         }
 );
 
@@ -43,10 +45,10 @@ const login=async(payload:ILogin)=>{
         email:userData.email,
         role:userData.role
         },
-        "abcdef", 
+        config.jwt.refresh_token_secret as Secret, 
         {
             algorithm:"HS256",
-            expiresIn:"15d"
+            expiresIn:config.jwt.refresh_token_expires_in
         }
 );
 
@@ -82,9 +84,10 @@ const refreshToken=async(token:string)=>{
         email:userData.email,
         role:userData.role
         },
-        "abcd",
+        config.jwt.access_token_secret as Secret,
         {
-            expiresIn:"5m"
+            algorithm:"HS256",
+            expiresIn:config.jwt.access_token_expires_in
         }
     );
     return {
