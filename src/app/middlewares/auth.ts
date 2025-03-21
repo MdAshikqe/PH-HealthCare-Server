@@ -5,13 +5,16 @@ import ApiError from "../errors/ApiErrors";
 import status from "http-status";
 
 const auth=(...roles:string[])=>{
-    return async (req:Request,res:Response,next:NextFunction)=>{
+    return async (req:Request & {user?:any},res:Response,next:NextFunction)=>{
        try {
             const token=req.headers.authorization;
             if(!token){
                 throw new ApiError(status.UNAUTHORIZED, "You are not authorized","")
             }
             const verifyUser=jwt.verify(token,config.jwt.access_token_secret as Secret)
+            //set req modde
+            req.user=verifyUser
+            //----******
             if (roles.length && typeof verifyUser !== "string" && !roles.includes(verifyUser.role)) {
                 throw new ApiError(status.FORBIDDEN,"forbidden",'')
             }
