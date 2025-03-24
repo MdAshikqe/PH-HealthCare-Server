@@ -4,7 +4,7 @@ import { UserService } from "./user.services";
 
 const createAdmin= async(req:Request,res:Response)=>{
   try {
-    const result= await UserService.createAdmin(req.body);
+    const result= await UserService.createAdmin(req);
     res.status(200).json({
         success:true,
         message:"Admin created successfully",
