@@ -193,7 +193,7 @@ const resetPassword= async(token:string,payload:any)=>{
     });
     return{
         message:"Successfully reset password"
-    }
+         }
 
 };
 
