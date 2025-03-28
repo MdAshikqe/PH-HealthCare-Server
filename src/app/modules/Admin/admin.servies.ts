@@ -25,7 +25,6 @@ import { IPagination } from "../../interfaces/pagination";
 
 
 const getAllDB= async(params:IAdminFilterRequest,options:IPagination)=>{
-    console.log({options});
     const {limit,skip,page}=PaginationHelpers.calculatePagination(options);
     const {searchTerm,...filterData}=params;
 
