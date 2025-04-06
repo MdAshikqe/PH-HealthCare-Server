@@ -4,6 +4,7 @@ import prisma from "../../../shared/prisma";
 import { fileUploader } from "../../../helpars/fileUploader";
 import { PaginationHelpers } from "../../../helpars/paginationHelpars";
 import { userSearchableFields } from "./user.constant";
+import { date } from "zod";
 
 
 const createAdmin= async(req:any)=>{
@@ -145,9 +146,26 @@ const getAllDB= async(params:any,options:any)=>{
    
 }
 
+const updateStatus=async(id:string,status:string)=>{
+    const userData= await prisma.user.findUniqueOrThrow({
+        where:{
+            id
+        }
+    });
+    const updateUserStatus=await prisma.user.update({
+        where:{
+            id
+        },
+        data:status
+    })
+    return updateUserStatus;
+
+}
+
 export const UserService={
     createAdmin,
     createDoctor,
     createPatient,
-    getAllDB
+    getAllDB,
+    updateStatus
 }

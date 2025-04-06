@@ -63,13 +63,25 @@ const getAllDB=catchAsync(async(req:Request,res:Response)=>{
     data:result
   })
 
-})
+});
+
+const updateStatus= catchAsync(async(req:Request,res:Response)=>{
+  const {id}=req.params;
+  const result= await UserService.updateStatus(id,req.body);
+  sendResponse(res,{
+    statusCode:status.OK,
+    success:true,
+    message:"Status updated successfully",
+    data:result
+  })
+});
 
 
 export const UserController={
     createAdmin,
     createDoctor,
     createPatient,
-    getAllDB
+    getAllDB,
+    updateStatus
 }
 
