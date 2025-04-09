@@ -5,6 +5,7 @@ import { fileUploader } from "../../../helpars/fileUploader";
 import { PaginationHelpers } from "../../../helpars/paginationHelpars";
 import { userSearchableFields } from "./user.constant";
 import { date } from "zod";
+import { userInfo } from "os";
 
 
 const createAdmin= async(req:any)=>{
@@ -162,10 +163,64 @@ const updateStatus=async(id:string,status:string)=>{
 
 }
 
+const getMyProfile=async(user:any)=>{
+    const userInfo=await prisma.user.findUniqueOrThrow({
+        where:{
+            email:user.email
+        },
+        select:{
+            id:true,
+            email:true,
+            status:true,
+            needChangePassword:true,
+            role:true,
+            createdAt:true,
+            updatedAt:true
+        }
+    })
+
+    let profileInfo;
+    if(userInfo.role === UserRole.ADMIN){
+        profileInfo= await prisma.admin.findUniqueOrThrow({
+            where:{
+                email:userInfo.email
+            }
+        })
+
+    }
+    else if(userInfo.role === UserRole.SUPER_ADMIN){
+        profileInfo= await prisma.admin.findUniqueOrThrow({
+            where:{
+                email:userInfo.email
+            }
+        })
+
+    }
+    else if(userInfo.role === UserRole.DOCTOR){
+        profileInfo=await prisma.doctor.findUniqueOrThrow({
+            where:{
+                email:userInfo.email
+            }
+        })
+    }
+    else if(userInfo.role === UserRole.PATIENT){
+        profileInfo= await prisma.patient.findUniqueOrThrow({
+            where:{
+                email:userInfo.email
+            }
+        })
+    }
+    return{
+        ...userInfo,...profileInfo
+    }
+
+}
+
 export const UserService={
     createAdmin,
     createDoctor,
     createPatient,
     getAllDB,
-    updateStatus
+    updateStatus,
+    getMyProfile
 }

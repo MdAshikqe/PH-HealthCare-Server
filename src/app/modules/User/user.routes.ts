@@ -42,6 +42,9 @@ router.post("/create-patient",
    );
 
 router.get("/",auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),UserController.getAllDB);
+router.get("/my-profile",
+auth(UserRole.ADMIN,UserRole.DOCTOR,UserRole.PATIENT,UserRole.SUPER_ADMIN),
+UserController.getMyProfile);
 
 router.patch("/:id/status",auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),validateRequest(UserValidation.updateStatus), UserController.updateStatus);
 
