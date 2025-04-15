@@ -5,6 +5,7 @@ import { fileUploader } from "../../../helpars/fileUploader";
 import { UserValidation } from "./user.validation";
 import { UserRole } from "@prisma/client";
 import validateRequest from "../../middlewares/validateRequest";
+import { json } from "stream/consumers";
 
 
 
@@ -42,9 +43,19 @@ router.post("/create-patient",
    );
 
 router.get("/",auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),UserController.getAllDB);
+
 router.get("/my-profile",
 auth(UserRole.ADMIN,UserRole.DOCTOR,UserRole.PATIENT,UserRole.SUPER_ADMIN),
 UserController.getMyProfile);
+
+router.patch("/update-my-profile",
+   auth(UserRole.ADMIN,UserRole.DOCTOR,UserRole.PATIENT,UserRole.SUPER_ADMIN),
+   fileUploader.upload.single('file'),
+   (req:Request,res:Response,next:NextFunction)=>{
+      req.body=JSON.parse(req.body.data)
+      return  UserController.updateMyProfile(req,res,next)
+   }
+);
 
 router.patch("/:id/status",auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),validateRequest(UserValidation.updateStatus), UserController.updateStatus);
 

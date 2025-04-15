@@ -87,8 +87,19 @@ const getMyProfile= catchAsync(async(req:Request,res:Response)=>{
     data:result
   })
 
-})
+});
 
+const updateMyProfile=catchAsync(async(req:Request,res:Response)=>{
+  
+  const result= await UserService.updateMyProfile(req.user,req.body);
+
+  sendResponse(res,{
+    statusCode:status.OK,
+    success:true,
+    message:"My profile updated successfully",
+    data:result
+  })
+})
 
 export const UserController={
     createAdmin,
@@ -96,6 +107,7 @@ export const UserController={
     createPatient,
     getAllDB,
     updateStatus,
-    getMyProfile
+    getMyProfile,
+    updateMyProfile
 }
 
