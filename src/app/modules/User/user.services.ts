@@ -6,6 +6,7 @@ import { PaginationHelpers } from "../../../helpars/paginationHelpars";
 import { userSearchableFields } from "./user.constant";
 import { date } from "zod";
 import { userInfo } from "os";
+import { Request } from "express";
 
 
 const createAdmin= async(req:any)=>{
@@ -216,20 +217,27 @@ const getMyProfile=async(user:any)=>{
 
 };
 
-const updateMyProfile= async(user:any,payload:any)=>{
+const updateMyProfile= async(user:any,req:Request)=>{
     const userInfo= await prisma.user.findUniqueOrThrow({
         where:{
             email:user.email,
             status:UserStatus.ACTIVE
         }
-    })
+    });
+    const file=req.file;
+    if(file){
+        const uploadToCloudinary= await fileUploader.uploadToCloudinary(file);
+        req.body.profilePhoto= uploadToCloudinary?.secure_url;
+    }
+
+
     let profileInfo;
     if(userInfo.role === UserRole.ADMIN){
         profileInfo= await prisma.admin.update({
             where:{
                 email:userInfo.email,
             },
-            data:payload
+            data:req.body
     })
 }
 else if(userInfo.role === UserRole.SUPER_ADMIN){
@@ -237,7 +245,7 @@ else if(userInfo.role === UserRole.SUPER_ADMIN){
         where:{
             email:userInfo.email,
         },
-        data:payload
+        data:req.body
     })
 }
 else if(userInfo.role === UserRole.DOCTOR){
@@ -245,7 +253,7 @@ else if(userInfo.role === UserRole.DOCTOR){
         where:{
             email:userInfo.email
         },
-        data:payload
+        data:req.body
     })
 }
 else if(userInfo.role === UserRole.PATIENT){
@@ -253,7 +261,7 @@ else if(userInfo.role === UserRole.PATIENT){
         where:{
             email:userInfo.email
         },
-        data:payload
+        data:req.body
     })
 }
     return {
