@@ -6,7 +6,6 @@ import jwt, { Secret } from "jsonwebtoken";
 import config from "../../../config";
 import ApiError from "../../errors/ApiErrors";
 import status from "http-status";
-import { urlencoded } from "express";
 import emailSender from "./emailSender";
 
 // const generateToken = (payload:any, secret: string, expiresIn: string) => {
