@@ -7,6 +7,7 @@ import { userSearchableFields } from "./user.constant";
 import { date } from "zod";
 import { userInfo } from "os";
 import { Request } from "express";
+import { IAuthUser } from "../../interfaces/common";
 
 
 const createAdmin= async(req:any)=>{
@@ -164,10 +165,10 @@ const updateStatus=async(id:string,status:string)=>{
 
 }
 
-const getMyProfile=async(user:any)=>{
+const getMyProfile=async(user:IAuthUser)=>{
     const userInfo=await prisma.user.findUniqueOrThrow({
         where:{
-            email:user.email
+            email:user?.email
         },
         select:{
             id:true,
@@ -217,10 +218,10 @@ const getMyProfile=async(user:any)=>{
 
 };
 
-const updateMyProfile= async(user:any,req:Request)=>{
+const updateMyProfile= async(user:IAuthUser,req:Request)=>{
     const userInfo= await prisma.user.findUniqueOrThrow({
         where:{
-            email:user.email,
+            email:user?.email,
             status:UserStatus.ACTIVE
         }
     });
