@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, UserStatus } from "@prisma/client";
 import { PaginationHelpers } from "../../../helpars/paginationHelpars";
 import prisma from "../../../shared/prisma"
 import { doctorSearchableFields } from "./doctor.constants";
@@ -66,13 +66,72 @@ const getAllDB= async(filters:any,options:any)=>{
 const getByIdFromDB=async(id:string)=>{
     const result= await prisma.doctor.findUniqueOrThrow({
         where:{
-            id
+            id,
+            isDeleted:false
         }
     })
         return result;
+};
+
+const deleteFromDB=async(id:string)=>{
+         await prisma.doctor.findUniqueOrThrow({
+        where:{
+            id,
+            isDeleted:false
+        }
+    });
+
+    const result=await prisma.$transaction(async(transtionClient)=>{
+        const deleteDoctorData= await transtionClient.doctor.delete({
+            where:{
+                id,
+            }
+        })
+
+         await transtionClient.user.delete({
+            where:{
+                email:deleteDoctorData?.email
+            }
+        })
+        return deleteDoctorData;
+    })
+    return result;
+};
+
+const softDeleteFromDB=async(id:string)=>{
+    await prisma.doctor.findUniqueOrThrow({
+        where:{
+            id,
+            isDeleted:false
+        }
+    })
+    const result= await prisma.$transaction(async(transactionClient)=>{
+
+        const doctorSoftDelete= await transactionClient.doctor.update({
+            where:{
+                id
+            },
+            data:{
+                isDeleted:true
+            }
+        })
+        const userSoftDelete=await transactionClient.user.update({
+            where:{
+                email:doctorSoftDelete.email
+            },
+            data:{
+                status:UserStatus.DELETED
+            }
+        })
+        return doctorSoftDelete;
+
+    })
+    return result;
 }
 
 export const DoctorServies={
     getAllDB,
-    getByIdFromDB
+    getByIdFromDB,
+    deleteFromDB,
+    softDeleteFromDB
 }

@@ -32,9 +32,35 @@ const getByIdFromDB=catchAsync(async(req:Request,res:Response)=>{
         message:"Successfully get by id",
         data:result
     })
+});
+
+const deleteFromDB=catchAsync(async(req,res)=>{
+    const {id}=req.params;
+    const result= await DoctorServies.deleteFromDB(id);
+
+    sendResponse(res,{
+        statusCode:status.OK,
+        success:true,
+        message:"Deleted from data successfully",
+        data:result
+    })
+});
+
+const softDeleteFromDB=catchAsync(async(req:Request,res:Response)=>{
+    const {id}=req.params;
+    const result= await DoctorServies.softDeleteFromDB(id);
+
+    sendResponse(res,{
+        statusCode:status.OK,
+        success:true,
+        message:"Soft deleted successfully",
+        data:result
+    })
 })
 
 export const DoctorController={
     getAllDB,
-    getByIdFromDB
+    getByIdFromDB,
+    deleteFromDB,
+    softDeleteFromDB
 }
