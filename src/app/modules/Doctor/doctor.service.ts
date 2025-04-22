@@ -2,7 +2,7 @@ import { Prisma, UserStatus } from "@prisma/client";
 import { PaginationHelpers } from "../../../helpars/paginationHelpars";
 import prisma from "../../../shared/prisma"
 import { doctorSearchableFields } from "./doctor.constants";
-import { title } from "process";
+
 
 const getAllDB= async(filters:any,options:any)=>{
         const {page,limit,skip}=PaginationHelpers.calculatePagination(options)
@@ -21,20 +21,20 @@ const getAllDB= async(filters:any,options:any)=>{
             })
         }
             // doctor-doctorSpcialtie--specialtie-title
-        // if(specialties && specialties.length >0){
-        //     andConditions.push({
-        //         doctorSpecialties:{
-        //             some:{
-        //                 specialties:{
-        //                     title:{
-        //                         contains:specialties,
-        //                         mode:"insensitive"
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     })
-        // }
+        if(specialties && specialties.length >0){
+            andConditions.push({
+                doctorSpecialties:{
+                    some:{
+                        specialties:{
+                            title:{
+                                contains:specialties,
+                                mode:"insensitive"
+                            }
+                        }
+                    }
+                }
+            })
+        }
 
         if (Object.keys(filterData).length > 0) {
             const filterConditions = Object.keys(filterData).map(key => ({
@@ -62,13 +62,13 @@ const getAllDB= async(filters:any,options:any)=>{
                 createdAt:"desc"
 
             },
-            // include:{
-            //     doctorSpecialties:{
-            //         include:{
-            //             specialties:true
-            //         }
-            //     }
-            // }
+            include:{
+                doctorSpecialties:{
+                    include:{
+                        specialties:true
+                    }
+                }
+            }
             });
             
             const total= await prisma.doctor.count({
@@ -156,14 +156,16 @@ const updateIntoDB=async(id:string,payload:any)=>{
     const {specialties,...doctorData}=payload;
     const doctorInfo= await prisma.doctor.findUniqueOrThrow({
         where:{
-            id
+            id,
+            isDeleted:false
         }
     })
 
     const result= await prisma.$transaction(async(transtionClient)=>{
         const updateDoctorData= await prisma.doctor.update({
             where:{
-                id
+                id,
+                isDeleted:false
             },
             data:doctorData,
             include:{
