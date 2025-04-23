@@ -11,7 +11,7 @@ export const doctorFilterAbleFields:string[]=[
 ];
 
 //USING SERVICE ANDCONDITION
-export const doctorSearchableFields:string[]=[ 
+export const doctorSearchableFields=[ 
     'name',
     'email',
     'contactNumber',
