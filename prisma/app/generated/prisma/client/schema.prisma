@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
   output   = "app/generated/prisma/client"
@@ -20,10 +17,9 @@ model User {
   status             UserStatus @default(ACTIVE)
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
-
-  admin   Admin?
-  doctor  Doctor?
-  patient Patient?
+  admin              Admin?
+  doctor             Doctor?
+  patient            Patient?
 
   @@map("users")
 }
@@ -37,8 +33,7 @@ model Admin {
   isDeleted     Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-
-  user User @relation(fields: [email], references: [email])
+  user          User     @relation(fields: [email], references: [email])
 
   @@map("admins")
 }
@@ -58,11 +53,10 @@ model Doctor {
   currentWorkingPlace String
   designaton          String
   isDeleted           Boolean             @default(false)
-  // averageRating Float
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
-  user                User                @relation(fields: [email], references: [email])
   doctorSpecialties   DoctorSpecialties[]
+  user                User                @relation(fields: [email], references: [email])
 
   @@map("doctors")
 }
@@ -76,9 +70,9 @@ model Patient {
   address           String
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
+  medicalReport     MedicalReport[]
   user              User               @relation(fields: [email], references: [email])
   patientHealthData PatientHealthData?
-  medicalReport     MedicalReport[]
 
   @@map("patients")
 }
@@ -94,9 +88,9 @@ model Specialties {
 
 model DoctorSpecialties {
   specialitiesId String
-  specialties    Specialties @relation(fields: [specialitiesId], references: [id])
   doctorId       String
   doctor         Doctor      @relation(fields: [doctorId], references: [id])
+  specialties    Specialties @relation(fields: [specialitiesId], references: [id])
 
   @@id([specialitiesId, doctorId])
   @@map("doctorSpecialties")
@@ -105,7 +99,6 @@ model DoctorSpecialties {
 model PatientHealthData {
   id                  String        @id @default(uuid())
   patientId           String        @unique
-  patient             Patient       @relation(fields: [patientId], references: [id])
   dateOfBirth         DateTime
   gender              Gender
   bloodGroup          BloodGroup
@@ -124,6 +117,7 @@ model PatientHealthData {
   maritalStatus       MaritalStatus
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
+  patient             Patient       @relation(fields: [patientId], references: [id])
 
   @@map("patients_health_data")
 }
@@ -131,16 +125,15 @@ model PatientHealthData {
 model MedicalReport {
   id         String   @id @default(uuid())
   patientId  String
-  patient    Patient  @relation(fields: [patientId], references: [id])
   reportName String
   reportLink String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  patient    Patient  @relation(fields: [patientId], references: [id])
 
   @@map("medical_report")
 }
 
-//total enum list for user
 enum UserRole {
   SUPER_ADMIN
   ADMIN

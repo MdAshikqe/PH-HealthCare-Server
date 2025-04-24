@@ -9,18 +9,17 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.13.10",
+    "@types/node": "^22.14.1",
     "prisma": "^6.6.0",
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
@@ -37,5 +36,14 @@
     "multer": "^1.4.5-lts.2",
     "nodemailer": "^6.10.0",
     "zod": "^3.24.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MdAshikqe/PH-HealthCare-Server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MdAshikqe/PH-HealthCare-Server/issues"
+  },
+  "homepage": "https://github.com/MdAshikqe/PH-HealthCare-Server#readme",
+  "description": ""
 }

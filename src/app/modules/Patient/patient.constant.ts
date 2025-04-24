@@ -1,8 +1,11 @@
-export const patientFilterAbleFields=[
-    'searchTerm',
-    'email',
-    'contactNo',
+export const patientFilterAbleFields:string[]=[
+    "searchTerm",
+    "email",
+    "contactNumber",
   ];
+  export const patientSearchAbleFields:string[]=["name", "email", "contactNumber"]
 
-export const patientPaginationFields=["page","limit","sortBy","sortOrder"]
+export const patientPaginationFields:string[]=["page","limit","sortBy","sortOrder"]
+
+
   
