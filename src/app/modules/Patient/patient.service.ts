@@ -10,7 +10,6 @@ const getAllDB=async(filters:any,options:any)=>{
     
 
     const andConditions:Prisma.PatientWhereInput[]=[];
-    console.log(andConditions)
 
     if(searchTerm){
         andConditions.push({
@@ -63,9 +62,26 @@ const getAllDB=async(filters:any,options:any)=>{
         },
         data:result
     };
-}
+};
+
+const getByIdFromDB=async(id:string)=>{
+    const result= await prisma.patient.findUniqueOrThrow({
+        where:{
+            id,
+            
+        },
+        include:{
+            medicalReport:true,
+            patientHealthData:true
+        }
+        
+    })
+
+    return result;
+};
 
 
 export const PatientServices={
-    getAllDB
+    getAllDB,
+    getByIdFromDB
 }

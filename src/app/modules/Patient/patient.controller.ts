@@ -20,8 +20,21 @@ const getAllDB=catchAsync(async(req:Request,res:Response)=>{
         data:result.data
     })
 
+});
+
+const getByIdFromDB=catchAsync(async(req:Request,res:Response)=>{
+    const {id}=req.params;
+    const result= await PatientServices.getByIdFromDB(id);
+
+    sendResponse(res,{
+        statusCode:status.OK,
+        success:true,
+        message:"Successfully get by id",
+        data:result
+    })
 })
 
 export const PatientControllers={
-    getAllDB
+    getAllDB,
+    getByIdFromDB
 }
