@@ -130,7 +130,10 @@ const getAllDB= async(params:any,options:any)=>{
                 needChangePassword:true,
                 role:true,
                 createdAt:true,
-                updatedAt:true
+                updatedAt:true,
+                admin:true,
+                patient:true,
+                doctor:true
             }
         });
         

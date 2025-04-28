@@ -44,10 +44,10 @@ const getAllDB=async(filters:any,options:any)=>{
         }:{
             createdAt:"desc"
         },
-        include:{
-            medicalReport:true,
-            patientHealthData:true
-        }
+        // include:{
+        //     medicalReport:true,
+        //     patientHealthData:true
+        // }
     }
 );
         const total= await prisma.patient.count({
@@ -68,20 +68,71 @@ const getByIdFromDB=async(id:string)=>{
     const result= await prisma.patient.findUniqueOrThrow({
         where:{
             id,
+
             
         },
-        include:{
-            medicalReport:true,
-            patientHealthData:true
-        }
+        // include:{
+        //     medicalReport:true,
+        //     patientHealthData:true
+        // }
         
     })
 
     return result;
 };
 
+const updateIntoDB= async(id:string,payload:any)=>{
+    const {healthData,medicalReport,...patientData}=payload;
+
+    const patientInfo= await prisma.patient.findUniqueOrThrow({
+        where:{
+            id,
+            
+        },
+        include:{
+            patientHealthData:true,
+            medicalReport:true
+        }
+    })
+    console.log('patientInfo',patientInfo)
+
+        await prisma.$transaction(async(transtionClint)=>{
+                await transtionClint.patient.update({
+            where:{
+                id:patientInfo.id
+            },
+            data:patientData,
+        });
+
+        if(healthData){
+          const updateAndCreate=  await transtionClint.patientHealthData.upsert({
+                where:{
+                    patientId:patientInfo.id
+                },
+                update:healthData,
+                create:{...healthData,patientId:patientInfo.id}
+                
+            })
+        }
+    })
+
+    const response= await prisma.patient.findUniqueOrThrow({
+        where:{
+            id:patientInfo.id
+        },
+        // include:{
+        //     patientHealthData:true,
+        //     medicalReport:true
+        // }
+    })
+
+    return response;
+
+}
+
 
 export const PatientServices={
     getAllDB,
-    getByIdFromDB
+    getByIdFromDB,
+    updateIntoDB
 }

@@ -100,27 +100,27 @@ model DoctorSpecialties {
 model PatientHealthData {
   id                  String        @id @default(uuid())
   patientId           String        @unique
-  dateOfBirth         DateTime
+  birthDate           String
   gender              Gender
   bloodGroup          BloodGroup
-  hasAllergies        Boolean
-  hasDiabetes         Boolean
+  hasAllergies        Boolean?      @default(false)
+  hasDiabetes         Boolean?      @default(false)
   height              String
   weight              String
-  smokingStatus       Boolean
-  dietaryPreferences  String
-  pregnancyStatus     Boolean
-  mentalHealthHistory String
-  immunizationStatus  String
-  hasPastSurgeries    Boolean
-  recentAnxiety       Boolean
-  recentDepression    Boolean
+  smokingStatus       Boolean?      @default(false)
+  dietaryPreferences  String?
+  pregnancyStatus     Boolean?      @default(false)
+  mentalHealthHistory String?
+  immunizationStatus  String?
+  hasPastSurgeries    Boolean?      @default(false)
+  recentAnxiety       Boolean?      @default(false)
+  recentDepression    Boolean?      @default(false)
   maritalStatus       MaritalStatus
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
   patient             Patient       @relation(fields: [patientId], references: [id])
 
-  @@map("patients_health_data")
+  @@map("patients_health_datas")
 }
 
 model MedicalReport {
