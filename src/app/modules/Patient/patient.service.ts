@@ -88,14 +88,10 @@ const updateIntoDB= async(id:string,payload:any)=>{
     const patientInfo= await prisma.patient.findUniqueOrThrow({
         where:{
             id,
+            isDeleted:false
             
-        },
-        include:{
-            patientHealthData:true,
-            medicalReport:true
         }
     })
-    console.log('patientInfo',patientInfo)
 
         await prisma.$transaction(async(transtionClint)=>{
                 await transtionClint.patient.update({
@@ -114,8 +110,14 @@ const updateIntoDB= async(id:string,payload:any)=>{
                 create:{...healthData,patientId:patientInfo.id}
                 
             })
+        };
+        if(medicalReport){
+            const updateAndCreate= await transtionClint.medicalReport.create({
+                data:{...medicalReport,patientId:patientInfo.id}
+            })
         }
-    })
+    });
+
 
     const response= await prisma.patient.findUniqueOrThrow({
         where:{
@@ -129,7 +131,9 @@ const updateIntoDB= async(id:string,payload:any)=>{
 
     return response;
 
-}
+};
+
+
 
 
 export const PatientServices={
