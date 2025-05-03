@@ -71,10 +71,10 @@ const getByIdFromDB=async(id:string)=>{
 
             
         },
-        // include:{
-        //     medicalReport:true,
-        //     patientHealthData:true
-        // }
+        include:{
+            medicalReport:true,
+            patientHealthData:true
+        }
         
     })
 

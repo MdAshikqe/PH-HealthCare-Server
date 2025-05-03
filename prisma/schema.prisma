@@ -120,7 +120,7 @@ model PatientHealthData {
   updatedAt           DateTime      @updatedAt
   patient             Patient       @relation(fields: [patientId], references: [id])
 
-  @@map("patients_health_datas")
+  @@map("patients_health_data")
 }
 
 model MedicalReport {
