@@ -44,10 +44,10 @@ const getAllDB=async(filters:any,options:any)=>{
         }:{
             createdAt:"desc"
         },
-        // include:{
-        //     medicalReport:true,
-        //     patientHealthData:true
-        // }
+        include:{
+            medicalReport:true,
+            patientHealthData:true
+        }
     }
 );
         const total= await prisma.patient.count({
@@ -68,6 +68,7 @@ const getByIdFromDB=async(id:string)=>{
     const result= await prisma.patient.findUniqueOrThrow({
         where:{
             id,
+            isDeleted:false
 
             
         },
@@ -120,10 +121,10 @@ const updateIntoDB= async(id:string,payload:any)=>{
         where:{
             id:patientInfo.id
         },
-        // include:{
-        //     patientHealthData:true,
-        //     medicalReport:true
-        // }
+        include:{
+            patientHealthData:true,
+            medicalReport:true
+        }
     })
 
     return response;
