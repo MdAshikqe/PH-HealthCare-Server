@@ -1,7 +1,8 @@
-import { Prisma } from "@prisma/client";
+import { Patient, Prisma } from "@prisma/client";
 import { PaginationHelpers } from "../../../helpars/paginationHelpars";
 import prisma from "../../../shared/prisma"
 import { patientSearchAbleFields } from "./patient.constant";
+import { IPatientUpdateInfo } from "./patient.interface";
 
 
 const getAllDB=async(filters:any,options:any)=>{
@@ -34,7 +35,6 @@ const getAllDB=async(filters:any,options:any)=>{
 
 
     const whereCondition:Prisma.PatientWhereInput=andConditions.length>0 ? {AND:andConditions}:{};
-    console.log('======',whereCondition)
     const result= await prisma.patient.findMany({
         where:whereCondition,
         skip,
@@ -64,7 +64,7 @@ const getAllDB=async(filters:any,options:any)=>{
     };
 };
 
-const getByIdFromDB=async(id:string)=>{
+const getByIdFromDB=async(id:string):Promise<Patient | null>=>{
     const result= await prisma.patient.findUniqueOrThrow({
         where:{
             id,
@@ -82,7 +82,7 @@ const getByIdFromDB=async(id:string)=>{
     return result;
 };
 
-const updateIntoDB= async(id:string,payload:any)=>{
+const updateIntoDB= async(id:string,payload:Partial<IPatientUpdateInfo>)=>{
     const {healthData,medicalReport,...patientData}=payload;
 
     const patientInfo= await prisma.patient.findUniqueOrThrow({
