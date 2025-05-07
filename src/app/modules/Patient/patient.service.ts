@@ -1,4 +1,4 @@
-import { Patient, Prisma } from "@prisma/client";
+import { Patient, Prisma, UserRole, UserStatus } from "@prisma/client";
 import { PaginationHelpers } from "../../../helpars/paginationHelpars";
 import prisma from "../../../shared/prisma"
 import { patientSearchAbleFields } from "./patient.constant";
@@ -133,11 +133,80 @@ const updateIntoDB= async(id:string,payload:Partial<IPatientUpdateInfo>)=>{
 
 };
 
+const deleteIntoDB=async(id:string)=>{
+    await prisma.patient.findUniqueOrThrow({
+        where:{
+            id,
+            isDeleted:false
+        }
+    })
+    const result= await prisma.$transaction(async(tx)=>{
+                 await tx.medicalReport.deleteMany({
+            where:{
+                patientId:id
+            }
+        });
+
+            await tx.patientHealthData.delete({
+            where:{
+                patientId:id
+            }
+        });
+
+        const deletePatient= await tx.patient.delete({
+            where:{
+                id
+            }
+        })
+
+             await tx.user.delete({
+            where:{
+                email:deletePatient.email
+            }
+        })
+        return deletePatient;
+    })
+    return result;
+};
+
+const softDeleteIntoDB=async(id:string)=>{
+        await prisma.patient.findUniqueOrThrow({
+        where:{
+            id,
+            isDeleted:false
+        }
+    })
+
+    const result= await prisma.$transaction(async(tx)=>{
+
+        const softPatinet= await tx.patient.update({
+            where:{
+                id
+            },
+            data:{
+                isDeleted:true
+            }
+        })
+                 await tx.user.update({
+            where:{
+                email:softPatinet.email
+            },  
+            data:{
+                status:UserStatus.DELETED
+            }
+        })
+        return softPatinet;
+    })
+    return result;
+}
+
 
 
 
 export const PatientServices={
     getAllDB,
     getByIdFromDB,
-    updateIntoDB
+    updateIntoDB,
+    deleteIntoDB,
+    softDeleteIntoDB
 }
