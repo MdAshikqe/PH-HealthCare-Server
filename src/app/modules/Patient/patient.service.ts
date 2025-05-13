@@ -198,7 +198,9 @@ const softDeleteIntoDB=async(id:string)=>{
         return softPatinet;
     })
     return result;
-}
+};
+
+
 
 
 
