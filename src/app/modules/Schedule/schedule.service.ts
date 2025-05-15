@@ -1,4 +1,5 @@
 import { addHours, addMinutes, format } from "date-fns";
+import prisma from "../../../shared/prisma";
 
 const insertIntoDB= async(payload:any)=>{
     const {startDate,endDate,startTime,endTime}=payload;
