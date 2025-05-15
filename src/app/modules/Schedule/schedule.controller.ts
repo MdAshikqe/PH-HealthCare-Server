@@ -5,7 +5,8 @@ import sendResponse from "../../../shared/sendResponse";
 import status from "http-status";
 
 const insertIntoDB=catchAsync(async(req:Request,res:Response)=>{
-    const result= await ScheduleServices.insertIntoDB();
+
+    const result= await ScheduleServices.insertIntoDB(req.body);
 
     sendResponse(res,{
         success:true,
