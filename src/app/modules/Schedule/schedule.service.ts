@@ -1,5 +1,7 @@
 import { addHours, addMinutes, format } from "date-fns";
 import prisma from "../../../shared/prisma";
+import { Schedule } from "@prisma/client";
+import { ISchedule } from "./schedule.interface";
 
 
 const convertDateTime = async (date: Date) => {
@@ -7,7 +9,7 @@ const convertDateTime = async (date: Date) => {
     return new Date(date.getTime() + offset);
 }
 
-const insertIntoDB= async(payload:any)=>{
+const insertIntoDB= async(payload:ISchedule):Promise<Schedule[]>=>{
     const {startDate,endDate,startTime,endTime}=payload;
  
 
@@ -56,10 +58,19 @@ const insertIntoDB= async(payload:any)=>{
                 endDate: e
             }
 
-                const result = await prisma.schedule.create({
+            const existingSchedule= await prisma.schedule.findFirst({
+                where:{
+                    startDate:scheduleData.startDate,
+                    endDate:scheduleData.endDate
+                }
+            })
+
+            if(!existingSchedule){
+                     const result = await prisma.schedule.create({
                     data: scheduleData as any // Remove 'as any' after adding all required fields
                 });
                 schedules.push(result)
+            }
                 
                 startDate.setMinutes(startDate.getMinutes() + interverlTime);
             }
