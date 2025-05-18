@@ -7,7 +7,18 @@ const insertIntoDB= async(user:any,payload:{scheduleIds:string[]})=>{
             email:user.email
         }
     })
-    console.log("create doctor schedule",payload.scheduleIds)
+
+    const doctorScheduleData=payload.scheduleIds.map(scheduleId=>({
+        doctorId:doctorData.id,
+        scheduleId
+
+    }))
+    
+    const result= await prisma.doctorSchedules.createMany({
+        data:doctorScheduleData
+    })
+
+    return result;
 }
 
 

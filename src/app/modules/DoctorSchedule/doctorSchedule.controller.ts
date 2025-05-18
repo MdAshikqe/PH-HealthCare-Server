@@ -3,8 +3,9 @@ import catchAsync from "../../../shared/catchAsync";
 import { DoctorScheduleServices } from "./doctorSchedule.service";
 import sendResponse from "../../../shared/sendResponse";
 import status from "http-status";
+import { IAuthUser } from "../../interfaces/common";
 
-const insertIntoDB= catchAsync(async(req:Request,res:Response)=>{
+const insertIntoDB= catchAsync(async(req:Request & {user?:IAuthUser},res:Response)=>{
     const user=req.user;
     const result= await DoctorScheduleServices.insertIntoDB(user,req.body);
 
