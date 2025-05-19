@@ -1,9 +1,10 @@
 import { addHours, addMinutes, format } from "date-fns";
 import prisma from "../../../shared/prisma";
-import { Schedule } from "@prisma/client";
-import { ISchedule } from "./schedule.interface";
+import { Prisma, Schedule } from "@prisma/client";
+import { IFilterRequest, ISchedule } from "./schedule.interface";
 import { PaginationHelpers } from "../../../helpars/paginationHelpars";
-import { scheduler } from "timers/promises";
+import { IPagination } from "../../interfaces/pagination";
+import { IAuthUser } from "../../interfaces/common";
 
 
 const convertDateTime = async (date: Date) => {
@@ -85,7 +86,7 @@ const insertIntoDB= async(payload:ISchedule):Promise<Schedule[]>=>{
 
 }
 
-const getAllDB=async(filters:any,options:any,user:any)=>{
+const getAllDB=async(filters:IFilterRequest,options:IPagination,user:IAuthUser)=>{
     const {page,limit,skip}=PaginationHelpers.calculatePagination(options);
     const {startDateTime,endDateTime,...filterData}=filters;
     
@@ -119,7 +120,7 @@ const getAllDB=async(filters:any,options:any,user:any)=>{
         })
     }
 
-    const whereCondition=andConditions.length>0 ? {AND:andConditions}:{};
+    const whereCondition:Prisma.ScheduleWhereInput=andConditions.length>0 ? {AND:andConditions}:{};
 
     const doctorSchedules= await prisma.doctorSchedules.findMany({
         where:{

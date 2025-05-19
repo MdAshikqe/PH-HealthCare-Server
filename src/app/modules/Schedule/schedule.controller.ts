@@ -24,7 +24,7 @@ const getAllDB=catchAsync(async(req:Request & {user?:IAuthUser},res:Response)=>{
     const filter=pick(req.query,["startDateTime","endDateTime"])
     const options=pick(req.query,["page","limit","sortBy","sortOrder"])
     const user=req.user;
-    const result= await ScheduleServices.getAllDB(filter,options,user);
+    const result= await ScheduleServices.getAllDB(filter,options,user as IAuthUser);
 
     sendResponse(res,{
         success:true,
