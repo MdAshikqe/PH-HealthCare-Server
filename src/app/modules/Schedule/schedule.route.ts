@@ -7,7 +7,7 @@ const router=express.Router();
 
 router.post("/",auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),scheduleControllers.insertIntoDB);
 
-router.get("/",scheduleControllers.getAllDB)
+router.get("/",auth(UserRole.DOCTOR) ,scheduleControllers.getAllDB)
 
 
 export const SchedulesRouter= router;

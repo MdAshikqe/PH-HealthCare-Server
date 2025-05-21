@@ -87,6 +87,7 @@ const insertIntoDB= async(payload:ISchedule):Promise<Schedule[]>=>{
 }
 
 const getAllDB=async(filters:IFilterRequest,options:IPagination,user:IAuthUser)=>{
+    console.log(user)
     const {page,limit,skip}=PaginationHelpers.calculatePagination(options);
     const {startDateTime,endDateTime,...filterData}=filters;
     
