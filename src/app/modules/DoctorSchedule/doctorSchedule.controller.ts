@@ -33,10 +33,10 @@ const getMySchedule=catchAsync(async(req:Request & {user?:IAuthUser},res:Respons
     })
 });
 
-const deleteFromDB= catchAsync(async(req:Request & {user?:IAuthUser},res:Response)=>{
+const deleteMyScheduleFromDB= catchAsync(async(req:Request & {user?:IAuthUser},res:Response)=>{
     const user=req.user;
     const {id}=req.params;
-    const result=await DoctorScheduleServices.deleteFromDB(user as IAuthUser,id);
+    const result=await DoctorScheduleServices.deleteMyScheduleFromDB(user as IAuthUser,id);
 
     sendResponse(res,{
         success:true,
@@ -44,10 +44,25 @@ const deleteFromDB= catchAsync(async(req:Request & {user?:IAuthUser},res:Respons
         message:"Doctor schedule delete from db",
         data:result
     })
+});
+
+const getAllDoctorSchedule=catchAsync(async(req:Request,res:Response)=>{
+    const filters=pick(req.query,['searchTerm', 'isBooked', 'doctorId'])
+    const options=pick(req.query,['limit', 'page', 'sortBy', 'sortOrder'])
+    const result= await DoctorScheduleServices.getAllDoctorSchedule(filters,options);
+
+    sendResponse(res,{
+        success:true,
+        statusCode:status.OK,
+        message:"All doctor schedule retrive successfully",
+        metaData:result.metaData,
+        data:result.data
+    })
 })
 
 export const DoctorScheduleControllers={
     insertIntoDB,
     getMySchedule,
-    deleteFromDB
+    deleteMyScheduleFromDB,
+    getAllDoctorSchedule
 }

@@ -130,7 +130,7 @@ const getMySchedule= async(filters:any,options:IPagination,user:IAuthUser)=>{
     }
 };
 
-const deleteFromDB= async(user:IAuthUser,id:string)=>{
+const deleteMyScheduleFromDB= async(user:IAuthUser,id:string)=>{
     const doctorData=await prisma.doctor.findUniqueOrThrow({
         where:{
             email:user?.email
@@ -160,6 +160,68 @@ const deleteFromDB= async(user:IAuthUser,id:string)=>{
         }
     })
     return result
+};
+
+const getAllDoctorSchedule= async(filters:any,options:IPagination)=>{
+    const {limit,page,skip}=PaginationHelpers.calculatePagination(options);
+    const {searchTerm,...filterData}=filters;
+
+    const andConditions=[];
+
+    if(searchTerm){
+        andConditions.push({
+            doctor:{
+                name:{
+                    contains:searchTerm,
+                    mode:'insensitive'
+                }
+            }
+        })
+    }
+
+    if(Object.keys(filterData).length>0){
+         if (typeof filterData.isBooked === 'string' && filterData.isBooked === 'true') {
+            filterData.isBooked = true;
+        } else if (typeof filterData.isBooked === 'string' && filterData.isBooked === 'false') {
+            filterData.isBooked = false;
+        }
+        andConditions.push({
+            AND:Object.keys(filterData).map(key=>({
+                [key]:{
+                    equals:(filterData as any)[key]
+                }
+            }))
+        })
+    }
+
+    const whereConditions:any=andConditions.length >0 ? {AND:andConditions}:{};
+
+    const total=await prisma.doctorSchedules.count({
+        where:whereConditions
+    })
+    const result= await prisma.doctorSchedules.findMany({
+        where:whereConditions,
+        skip,
+        take:limit,
+        orderBy:options.sortBy && options.sortOrder ? {
+            [options.sortBy]:options.sortOrder
+        }:{},
+        include:{
+            doctor:true,
+            schedule:true
+        }
+    })
+
+    return{
+        metaData:{
+            total,
+            page,
+            limit
+        },
+        data:result
+    }
+
+    
 }
 
 
@@ -167,5 +229,6 @@ const deleteFromDB= async(user:IAuthUser,id:string)=>{
 export const DoctorScheduleServices={
     insertIntoDB,
     getMySchedule,
-    deleteFromDB
+    deleteMyScheduleFromDB,
+    getAllDoctorSchedule
 }
