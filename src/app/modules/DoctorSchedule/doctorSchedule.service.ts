@@ -5,6 +5,7 @@ import { IAuthUser } from "../../interfaces/common";
 import { IPagination } from "../../interfaces/pagination";
 import ApiError from "../../errors/ApiErrors";
 import status from "http-status";
+import { TMuslima } from "./doctorSchedule.interface";
 
 
 const insertIntoDB= async(user:any,payload:{scheduleIds:string[]})=>{
@@ -163,6 +164,7 @@ const deleteMyScheduleFromDB= async(user:IAuthUser,id:string)=>{
 };
 
 const getAllDoctorSchedule= async(filters:any,options:IPagination)=>{
+
     const {limit,page,skip}=PaginationHelpers.calculatePagination(options);
     const {searchTerm,...filterData}=filters;
 
@@ -222,7 +224,19 @@ const getAllDoctorSchedule= async(filters:any,options:IPagination)=>{
     }
 
     
+};
+
+const getMuslima=()=>{
+    console.log("muslim get retrive all")
 }
+
+
+ function muslim(personaly:TMuslima) {
+        
+    
+}
+
+
 
 
 
