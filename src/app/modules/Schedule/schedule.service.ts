@@ -178,10 +178,20 @@ const getByIdFromDB=async(id:string)=>{
         }
     })
     return result
+};
+
+const deleteByIdFromDB=async(id:string)=>{
+    const result= await prisma.schedule.delete({
+        where:{
+            id
+        }
+    })
+    return result;
 }
 
 export const ScheduleServices={
     insertIntoDB,
     getAllDB,
-    getByIdFromDB
+    getByIdFromDB,
+    deleteByIdFromDB
 }
