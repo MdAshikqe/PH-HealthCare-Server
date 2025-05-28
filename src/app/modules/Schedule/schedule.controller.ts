@@ -33,9 +33,22 @@ const getAllDB=catchAsync(async(req:Request & {user?:IAuthUser},res:Response)=>{
         metaData:result.metaData,
         data:result.data
     })
+});
+
+const getByIdFromDB=catchAsync(async(req:Request,res:Response)=>{
+    const {id}=req.params;
+    const result= await ScheduleServices.getByIdFromDB(id);
+
+    sendResponse(res,{
+        success:true,
+        statusCode:status.OK,
+        message:"Schedule id retrive successfully",
+        data:result
+    })
 })
 
 export const scheduleControllers={
     insertIntoDB,
-    getAllDB
+    getAllDB,
+    getByIdFromDB
 }
