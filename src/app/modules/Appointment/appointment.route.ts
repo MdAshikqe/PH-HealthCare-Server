@@ -6,7 +6,8 @@ import { UserRole } from "@prisma/client";
 const router=express.Router();
 
 router.post("/",auth(UserRole.PATIENT),AppointmentController.createAppointment)
-router.get("/",auth(UserRole.PATIENT,UserRole.DOCTOR),AppointmentController.getMyAppointment)
+router.get("/my-appointment",auth(UserRole.PATIENT,UserRole.DOCTOR),AppointmentController.getMyAppointment)
+router.get("/",auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),AppointmentController.getAllFromDB)
 
 
 
