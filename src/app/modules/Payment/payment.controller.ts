@@ -16,6 +16,18 @@ const initPayment=catchAsync(async(req:Request,res:Response)=>{
     })
 })
 
+const validatedPayment=catchAsync(async(req:Request,res:Response)=>{
+    const result= await PaymentService.validatedPayment(req.query);
+
+    sendResponse(res,{
+        success:true,
+        statusCode:status.OK,
+        message:"Payment validated sussfully",
+        data:result
+    })
+})
+
 export const PaymentController={
     initPayment,
+    validatedPayment
 }

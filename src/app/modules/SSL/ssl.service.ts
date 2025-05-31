@@ -2,8 +2,9 @@ import axios from "axios";
 import config from "../../../config";
 import ApiError from "../../errors/ApiErrors";
 import status from "http-status";
+import { IPaymentData } from "./ssl.interface";
 
-const initPayment=async(paymentData:any)=>{
+const initPayment=async(paymentData:IPaymentData)=>{
 try {
          const data = {
         store_id:config.ssl.storeId,
@@ -51,6 +52,21 @@ try {
 }
 }
 
+const validatePayment=async(payload:any)=>{
+try {
+            const response= await axios({
+            method:"GET",
+            url:`${config.ssl.sslValidationApi}?val_id=${payload.val_id}&store_id=${config.ssl.storeId}&store_passwd=${config.ssl.storePass}&format=json`
+        })
+        return response.data;
+} catch (error) {
+    throw new ApiError(status.BAD_REQUEST,"Payment validation failed","")
+}
+}
+
+
+
 export const SSLService={
-    initPayment
+    initPayment,
+    validatePayment
 }
