@@ -3,7 +3,7 @@ import { IAuthUser } from "../../interfaces/common"
 import { v4 as uuidv4 } from "uuid";
 import { IPagination } from "../../interfaces/pagination";
 import { PaginationHelpers } from "../../../helpars/paginationHelpars";
-import { AppointmentStatus, Prisma, UserRole } from "@prisma/client";
+import { AppointmentStatus, PaymentStatus, Prisma, UserRole } from "@prisma/client";
 import ApiError from "../../errors/ApiErrors";
 import httpStatus from "http-status";
 
@@ -228,11 +228,64 @@ const changeAppointmentStatus=async(appointmentId:string,status:AppointmentStatu
     });
     return result;
 
+};
+
+const cancleUnpaidAppoinment=async()=>{
+    
+    const thirtyMinitueAgo=new Date(Date.now() - 30*60*1000)
+
+    const unPaidAppointments= await prisma.appointment.findMany({
+        where:{
+            createAt:{
+                lte:thirtyMinitueAgo
+            },
+            paymentStatus:PaymentStatus.UNPAID
+        }
+    })
+
+    const appointmentIdsToCancle=unPaidAppointments.map(appointment=>appointment.id)
+
+    await prisma.$transaction(async(tx)=>{
+
+        await tx.payment.deleteMany({
+            where:{
+                appointmentId:{
+                    in:appointmentIdsToCancle
+                }
+            }
+        })
+
+        await tx.appointment.deleteMany({
+            where:{
+                id:{
+                    in:appointmentIdsToCancle
+                }
+            }
+        })
+
+        for(const unPaidAppointment of unPaidAppointments){
+            await tx.doctorSchedules.updateMany({
+                where:{
+                    doctorId:unPaidAppointment.doctorId,
+                    scheduleId:unPaidAppointment.scheduleId
+                },
+                data:{
+                    isBooked:false
+                }
+            })
+        }
+    })
+
+
+    console.log("updated")
+
+    
 }
 
 export const AppointmentService={
     createAppointment,
     getMyAppointment,
     getAllFromDB,
-    changeAppointmentStatus
+    changeAppointmentStatus,
+    cancleUnpaidAppoinment
 }
