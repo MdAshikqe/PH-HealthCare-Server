@@ -4,6 +4,7 @@ import config from "../../../config";
 import prisma from "../../../shared/prisma";
 import { SSLService } from "../SSL/ssl.service";
 import { PaymentStatus } from "@prisma/client";
+
 const initPayment=async(appointmentId:string)=>{
 
     const paymentData=await prisma.payment.findFirstOrThrow({
@@ -33,7 +34,7 @@ const initPayment=async(appointmentId:string)=>{
         PaymentUrl: result.GatewayPageURL
     }
 
-}
+};
 
 const validatedPayment=async(payload:any)=>{
     //-----for production ------
@@ -80,7 +81,9 @@ const validatedPayment=async(payload:any)=>{
     return {
         message:"Payment successfully"
     }
-}
+};
+
+
 
 export const PaymentService={
     initPayment,
