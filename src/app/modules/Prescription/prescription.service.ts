@@ -72,7 +72,9 @@ const patientPrescription=async(user:IAuthUser,options:IPagination)=>{
         },
         data:result
     };
-}
+};
+
+
 
 export const PrescriptionService={
         insertIntoDB,
