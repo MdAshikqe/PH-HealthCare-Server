@@ -275,11 +275,6 @@ const cancleUnpaidAppoinment=async()=>{
             })
         }
     })
-
-
-    console.log("updated")
-
-    
 }
 
 export const AppointmentService={
