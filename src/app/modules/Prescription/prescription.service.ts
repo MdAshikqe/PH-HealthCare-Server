@@ -3,6 +3,8 @@ import prisma from "../../../shared/prisma"
 import { IAuthUser } from "../../interfaces/common"
 import ApiError from "../../errors/ApiErrors"
 import Httpstatus from "http-status"
+import { PaginationHelpers } from "../../../helpars/paginationHelpars"
+import { IPagination } from "../../interfaces/pagination"
 
 const insertIntoDB=async(user:IAuthUser,payload:any)=>{
 const appointmentData= await prisma.appointment.findUniqueOrThrow({
@@ -33,8 +35,46 @@ const appointmentData= await prisma.appointment.findUniqueOrThrow({
 
     return result;
 
+};
+
+const patientPrescription=async(user:IAuthUser,options:IPagination)=>{
+    const {limit,page,skip}=PaginationHelpers.calculatePagination(options)
+    const result=await prisma.prescription.findMany({
+        where:{
+            patient:{
+                email:user?.email
+            },
+        },
+        skip,
+        take:limit,
+        orderBy:options.sortBy && options.sortOrder ? 
+        {[options.sortBy]:options.sortOrder}:{ createdAt:"desc"},
+        include: {
+            doctor:true,
+            appointment:true,
+            patient:true
+        }
+    });
+
+    const total= await prisma.prescription.count({
+        where:{
+            patient:{
+                email:user?.email
+            }
+        }
+    })
+
+    return {
+        metaData:{
+            page,
+            limit,
+            total
+        },
+        data:result
+    };
 }
 
 export const PrescriptionService={
-        insertIntoDB
+        insertIntoDB,
+        patientPrescription
 }
