@@ -15,7 +15,7 @@ const globalErrorHandaler=(err:any,req:Request,res:Response,next:NextFunction)=>
         }
     }
 
-    if(error instanceof Prisma.PrismaClientKnownRequestError){
+    if(err instanceof Prisma.PrismaClientKnownRequestError){
             if(err.code==="P2002"){
                 message="Duplicate key error";
                 error=err.meta

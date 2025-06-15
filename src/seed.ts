@@ -1,14 +1,15 @@
 import { UserRole } from "@prisma/client"
-import prisma from "../src/shared/prisma"
+import prisma from "./shared/prisma"
 import bcryt from "bcrypt"
 
 const seedSuperAdmin=async()=>{
 try {
-        const isExistSuperAdmin= await prisma.user.findFirstOrThrow({
+        const isExistSuperAdmin= await prisma.user.findFirst({
         where:{
             role:UserRole.SUPER_ADMIN
         }
     })
+
     if(isExistSuperAdmin){
         console.log("Super Admin already exits")
         return
