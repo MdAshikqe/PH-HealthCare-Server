@@ -58,6 +58,7 @@ const getAdminMetaData = async () => {
 
     const barCharData= await getBarChartData();
     const pieChartData=await getPieChartData();
+
     return {appointmentCount,patientCount,doctorCount,paymentCount,totalRevenue,barCharData,pieChartData}
 
 }

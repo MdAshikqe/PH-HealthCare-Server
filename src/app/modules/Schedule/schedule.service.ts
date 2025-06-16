@@ -46,6 +46,8 @@ const insertIntoDB= async(payload:ISchedule):Promise<Schedule[]>=>{
             );
 
             while(startDate < endDate){
+                
+                 //---------local time-------------
                 // const scheduleData = {
                 //     startDateTime: startDateTime.toISOString(),
                 //     endDateTime: addMinutes(startDateTime, interverlTime).toISOString(),
@@ -53,7 +55,7 @@ const insertIntoDB= async(payload:ISchedule):Promise<Schedule[]>=>{
                 //     // userId: payload.userId,
                 //     // doctorId: payload.doctorId,
                 // };
-                            const s = await convertDateTime(startDate);
+            const s = await convertDateTime(startDate);
             const e = await convertDateTime(addMinutes(startDate, interverlTime))
 
             const scheduleData = {
@@ -177,6 +179,13 @@ const getByIdFromDB=async(id:string)=>{
             id
         }
     })
+
+    //----------local time 
+    // console.log(result?.startDate.getHours() + ":" + result?.startDate.getMinutes())
+
+    //------------UTC TIME 
+    // console.log(result?.startDate.getUTCHours() + ":" + result?.startDate.getUTCMinutes())
+
     return result
 };
 

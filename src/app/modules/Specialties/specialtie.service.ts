@@ -4,7 +4,6 @@ import { fileUploader } from "../../../helpars/fileUploader";
 import { IFile } from "../../interfaces/common";
 
 
-
 const insertInToDB=async(req:Request)=>{
     const file= req.file as IFile;
     if(file){
