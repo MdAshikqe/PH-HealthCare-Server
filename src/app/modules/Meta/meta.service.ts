@@ -27,6 +27,22 @@ const fetchDashboardMetaData = async (user: IAuthUser) => {
 }
 
 const getSuperAdminMetaData = async () => {
+    const appointmentCount=await prisma.appointment.count();
+    const patientCount=await prisma.patient.count();
+    const doctorCount=await prisma.doctor.count();
+    const paymentCount= await prisma.payment.count();
+    const revenue= await prisma.payment.aggregate({
+        _sum:{amount:true},
+        where:{status:PaymentStatus.PAID}
+    });
+
+    const totalRevenue= revenue._sum.amount;
+
+    const barCharData= await getBarChartData();
+    const pieChartData=await getPieChartData();
+
+    return {appointmentCount,patientCount,doctorCount,paymentCount,totalRevenue,barCharData,pieChartData}
+
 
 }
 const getAdminMetaData = async () => {
@@ -39,7 +55,10 @@ const getAdminMetaData = async () => {
         where:{status:PaymentStatus.PAID}
     });
     const totalRevenue=revenue._sum.amount
-    return {appointmentCount,patientCount,doctorCount,paymentCount,totalRevenue}
+
+    const barCharData= await getBarChartData();
+    const pieChartData=await getPieChartData();
+    return {appointmentCount,patientCount,doctorCount,paymentCount,totalRevenue,barCharData,pieChartData}
 
 }
 const getDoctorMetaData = async (user:IAuthUser) => {
@@ -127,6 +146,32 @@ const getPatientMetaData = async (user:IAuthUser) => {
         count:Number(_count.id)
     }))
     return {appointmentCount,prescriptionCount,reviewCount,formattedAppointmentStatusDistribution}
+}
+
+const getBarChartData=async()=>{
+    const appointmentCountByMonths= await prisma.$queryRaw`
+    SELECT DATE_TRUNC('month',"createAt") AS month,
+    CAST(COUNT(*) AS INTEGER) AS count
+    FROM "appointments"
+    GROUP BY month
+    ORDER BY month ASC
+    `
+
+    return appointmentCountByMonths;
+}
+
+const getPieChartData=async()=>{
+       const appointmentStatusDistributtion= await prisma.appointment.groupBy({
+        by:["status"],
+        _count:{id:true}
+        
+    })
+    const formattedAppointmentStatusDistribution= appointmentStatusDistributtion.map(({status,_count})=>({
+        status,
+        count:Number(_count.id)
+    }))
+
+    return formattedAppointmentStatusDistribution;
 }
 
 export const MetaServices={
